@@ -3504,13 +3504,15 @@ int *x, *y;
 	 * Let OPTION through so we can hit the OPTIONs.
 	 * Let TEXTAREA through so we can hit the TEXTAREAs.
 	 */
-	if ((Ignore)&&(!InDocHead)&&(type != M_TITLE)&&(type != M_NONE)&&
+	if ((Ignore)&&(!InDocHead)&&(type != M_TITLE)&&(type != M_NONE)&&(type != M_COMMENT)&&
 		(type != M_SELECT)&&(type != M_OPTION)&&
 		(type != M_TEXTAREA)&&(type != M_DOC_HEAD))
 	{
 		return;
 	}
 
+	fprintf(stderr, "Format Type %d\n", type);
+	fprintf(stderr, "Format mark->isEnd %d\n", mark->is_end);
 	switch(type)
 	{
 		/*
@@ -4829,6 +4831,18 @@ int *x, *y;
 	case M_TABLE:
 		if (tableSupportEnabled) {
 			TablePlace(hw, mptr, x, y, Width);
+		}
+		break;
+	case M_COMMENT:
+		if (mark->is_end)
+		{
+			fprintf(stderr, "Format Comment end\n");
+			Ignore = 0;
+		}
+		else
+		{
+			Ignore = 1;
+			fprintf(stderr, "Format Comment start\n");
 		}
 		break;
 	default:

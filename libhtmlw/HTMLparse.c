@@ -728,6 +728,8 @@ get_mark(start, endp)
  *
  */
 
+
+	fprintf(stderr, "Mark text  (%s)\n", text);
 	/*
 	 * Set whether this is the start or end of a mark
 	 * block, as well as determining its type.
@@ -736,21 +738,28 @@ get_mark(start, endp)
 	{
 		mark->is_end = 1;
 		mark->type = ParseMarkType((char *)(text + 1));
+		if(mark->type == M_COMMENT) {
+			fprintf(stderr, "Comment end  (%s)\n", (char *)(text + 1));
+		}
 		mark->start = NULL;
 		mark->text = NULL;
 		mark->end = text;
+		mark->next = NULL;
 	}
 	else
 	{
 		mark->is_end = 0;
 		mark->type = ParseMarkType(text);
+		if(mark->type == M_COMMENT) {
+			fprintf(stderr, "Comment start  (%s)\n", text);
+		}
 		mark->start = text;
 		mark->text = NULL;
 		mark->end = NULL;
+		mark->next = NULL;
 	}
 
-	mark->text = NULL;
-	mark->next = NULL;
+
 
 	return(mark);
 }
@@ -1050,7 +1059,7 @@ HTMLParse(old_list, str, hw)
 		    }
                     
 		    mark->next = NULL;
-                    current = AddObj(&list, current, mark, preformat);
+            current = AddObj(&list, current, mark, preformat);
                     
 		}
                 
@@ -1407,13 +1416,21 @@ ParseMarkType(str)
 	{
 		type = M_CENTER;
 	}
+	else if (caseless_equal(str, MT_SCRIPT))
+	{
+		type = M_COMMENT;
+	}
+	else if (caseless_equal(str, MT_STYLE))
+	{
+		type = M_COMMENT;
+	}
 	else
 	{
-#ifndef DISABLE_TRACE
-		if (htmlwTrace) {
+//#ifndef DISABLE_TRACE
+//		if (htmlwTrace) {
 			fprintf(stderr, "warning: unknown mark (%s)\n", str);
-		}
-#endif
+//		}
+//#endif
 		type = M_UNKNOWN;
 	}
 
