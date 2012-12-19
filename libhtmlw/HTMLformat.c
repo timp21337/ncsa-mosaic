@@ -3510,9 +3510,10 @@ int *x, *y;
 	{
 		return;
 	}
-
+/* 
 	fprintf(stderr, "Format Type %d\n", type);
 	fprintf(stderr, "Format mark->isEnd %d\n", mark->is_end);
+*/
 	switch(type)
 	{
 		/*
